@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -13,17 +14,22 @@ import androidx.annotation.NonNull;
 
 import com.example.game2048.sprites.Grid;
 
-public class GameManager extends SurfaceView implements SurfaceHolder.Callback
+public class GameManager extends SurfaceView implements SurfaceHolder.Callback, SwipeCallback
 {
     private MainThread thread;
     private Grid grid;
     private int screenWidth, screenHeight, standardSize;
+    private TileManager tileManager;
+
+    private SwipeListener swipe;
 
     public GameManager(Context context, AttributeSet set)
     {
         super(context, set);
+        setLongClickable(true);
         getHolder().addCallback(this);
 
+        swipe = new SwipeListener(getContext(), this);
         DisplayMetrics dm = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -32,6 +38,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback
         standardSize = (int) (screenWidth * 0.88) / 4;
 
         grid = new Grid(getResources(), screenWidth, screenHeight, standardSize);
+        tileManager = new TileManager(getResources(), standardSize, screenWidth, screenHeight);
     }
 
     @Override
@@ -70,7 +77,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback
 
     public void update()
     {
-
+        tileManager.update();
     }
 
     @Override
@@ -79,6 +86,20 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback
         super.draw(canvas);
         canvas.drawRGB(90, 90, 90);
         grid.draw(canvas);
+        tileManager.draw(canvas);
 
+    }
+
+    @Override
+    public void onSwipe(Direction direction)
+    {
+        tileManager.onSwipe(direction);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        swipe.onTouchEvent(event);
+        return super.onTouchEvent(event);
     }
 }
