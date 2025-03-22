@@ -51,6 +51,11 @@ public class Tile implements Sprite
         return count;
     }
 
+    public void setValue(int count)
+    {
+        this.count = count;
+    }
+
     public Tile increment()
     {
         increment = true;

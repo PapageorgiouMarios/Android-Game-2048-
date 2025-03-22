@@ -39,6 +39,8 @@ public class TileManager implements TileManagerCallback, Sprite
 
     public void initGame()
     {
+        endGame = false;
+
         matrix = new Tile[4][4];
         movingTiles = new ArrayList<>();
 
@@ -57,19 +59,6 @@ public class TileManager implements TileManagerCallback, Sprite
                 i--;
             }
         }
-
-       /* for(int i = 0; i < 4; i++)
-        {
-            for(int j = 0; j < 4; j++)
-            {
-                if(i != 3 || j != 3)
-                {
-                    Tile t = new Tile(standardSize, screenWidth, screenHeight, this, i, j);
-                }
-            }
-        }
-
-        */
     }
 
     private void initBitmaps()
@@ -500,6 +489,62 @@ public class TileManager implements TileManagerCallback, Sprite
                 {
                     t = new Tile(standardSize, screenWidth, screenHeight, this, x, y);
                     matrix[x][y] = t;
+                }
+            }
+        }
+    }
+
+    public String serializeGameState()
+    {
+        StringBuilder savedState = new StringBuilder();
+
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (matrix[i][j] != null)
+                {
+                    savedState.append(matrix[i][j].getValue());
+                }
+                else
+                {
+                    savedState.append("0");
+                }
+                if (j < 3)
+                {
+                    savedState.append(",");
+                }
+            }
+            if (i < 3)
+            {
+                savedState.append(";");
+            }
+        }
+        return savedState.toString();
+    }
+
+    public void deserializeGameState(String savedState)
+    {
+        // Split rows by semicolon.
+        String[] rows = savedState.split(";");
+        for (int i = 0; i < 4 && i < rows.length; i++)
+        {
+            // Split columns by comma.
+            String[] cols = rows[i].split(",");
+            for (int j = 0; j < 4 && j < cols.length; j++)
+            {
+                int value = Integer.parseInt(cols[j]);
+
+                if (value != 0)
+                {
+                    // Create a new Tile with the given value.
+                    Tile tile = new Tile(standardSize, screenWidth, screenHeight, this, i, j);
+                    tile.setValue(value); // Ensure your Tile class has this setter.
+                    matrix[i][j] = tile;
+                }
+                else
+                {
+                    matrix[i][j] = null;
                 }
             }
         }

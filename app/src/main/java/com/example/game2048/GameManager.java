@@ -110,6 +110,11 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         }
     }
 
+    public TileManager getTileManager()
+    {
+        return tileManager;
+    }
+
     public void update()
     {
         if(!endGame)
@@ -149,12 +154,13 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             if(event.getAction() == MotionEvent.ACTION_DOWN)
             {
                 initGame();
+                return true;
             }
         }
         else
         {
-            float eventX = event.getAxisValue(MotionEvent.AXIS_X);
-            float eventY = event.getAxisValue(MotionEvent.AXIS_Y);
+            float eventX = event.getX();
+            float eventY = event.getY();
 
             if(event.getAction() == MotionEvent.ACTION_DOWN
                     && eventX > restartButtonX
@@ -163,13 +169,14 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                     && eventY < restartButtonY + restartButtonSize)
             {
                 initGame();
+                return true;
             }
             else
             {
                 swipe.onTouchEvent(event);
             }
         }
-        return super.onTouchEvent(event);
+        return true;
     }
 
     @Override
